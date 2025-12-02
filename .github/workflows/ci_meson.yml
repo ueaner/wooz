@@ -25,8 +25,10 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: python -m pip install meson==${{ matrix.meson_version }} ninja
-      - name: Install Wayland client development package
-        run: sudo apt-get update && sudo apt-get install -y libwayland-dev
+      - name: Install Wayland dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwayland-dev wayland-protocols
       - name: Configure Project
         run: meson setup builddir/
         env:

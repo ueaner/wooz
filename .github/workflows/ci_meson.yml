@@ -22,19 +22,33 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-      - name: Install dependencies
+          python-version: "3.x"
+      - name: Install build dependencies (Meson & Ninja)
         run: python -m pip install meson==${{ matrix.meson_version }} ninja
-      - name: Install Wayland dependencies
+
+      - name: Install Wayland dependencies (libwayland-dev & wayland-protocols)
         run: |
           sudo apt-get update
           sudo apt-get install -y libwayland-dev wayland-protocols
+
       - name: Configure Project
         run: meson setup builddir/
         env:
           CC: gcc
+      - name: Compile Project
+        run: meson compile -C builddir/ # 明确执行编译
+
       - name: Run Tests
         run: meson test -C builddir/ -v
+
+      # *** 上传 wooz 二进制文件 ***
+      - name: Upload wooz Binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: wooz-binary-${{ matrix.meson_version }}-${{ matrix.os }}
+          path: builddir/wooz
+          if-no-files-found: error
+
       - name: Upload Test Log
         uses: actions/upload-artifact@v4
         if: failure()

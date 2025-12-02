@@ -2,13 +2,11 @@ name: CI Meson
 
 on:
   push:
-    paths:
-      - "**.c"
-      - "**.h"
+    branches:
+      - master
   pull_request:
-    paths:
-      - "**.c"
-      - "**.h"
+    branches:
+      - master
 
 jobs:
   build:
